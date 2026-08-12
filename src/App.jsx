@@ -112,12 +112,14 @@ const eliminarUsuario = (idTarget) => {
             <button onClick={()=>deleteTodo(index)}>❌ Eliminar </button></li>
         ))}
       </ul>
-
+          <br></br>
       <h2>Lista de Usuarios desde API 👥</h2>
+      <br></br>
     {cargando2?(
         <h2>Cargando usuarios... ⏳</h2>
         ):error?(
         <h2>{error} Se mostrarán usuarios de prueba</h2>):('')}
+     <br></br>
       <ul>
         {usuarios2.map(usuario =>(
           /* <li key={usuario.id}> 
