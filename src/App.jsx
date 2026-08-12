@@ -7,6 +7,7 @@ function App(){
   // 1. Estados (El equivalente a las propiedades de tu clase en Angular)
   const [todos, setTodos] = useState(['Aprender React', 'Migrar de Angular']);
   const [newTodo, setNewTodo] = useState('');
+  const [error, setError] = useState('');
 
   // 2. Funcuones de lógica
   const addTodo = () => {
@@ -27,7 +28,7 @@ function App(){
   const [usuarios2, setUsuarios2] = useState([]);
   const [cargando2, setCargando2] = useState(true);
 
-  useEffect(() => {
+ /*  useEffect(() => {
     // Usamos fetch nativo de JavaScript (no hace falta HttpClient)
     // Esta forma se llama "Estructura de Cadena" utiliza promesas y then, no es
     // muy práctica ya que al ser dificil de leer produce "Callback Hell"
@@ -38,11 +39,50 @@ function App(){
         setUsuarios2(data); // Guardamos los datos en el estado
         setCargando2(false); // Apagamos el indicador de carga
       });
-  }, []); // 👈 ¡ESTE ARRAY VACÍO ES LA CLAVE!
+  }, []); // 👈 ¡ESTE ARRAY VACÍO ES LA CLAVE! */
 
-  if(cargando2) return <h2>Cargando usuarios.. ⏳</h2>
+  useEffect(() => {
+    const cargarDatos = async () => {
+      // Creamos un controlador para poder cancelar la petición
+      const controller = new AbortController();
+      
+      // Configuramos un temporizador de 4 segundos (4000ms)
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+  
+      try {
+        // Le pasamos la señal de cancelación al fetch
+        const respuesta = await fetch('https://jsonplaceholder.typicode.com/users', { 
+          signal: controller.signal 
+        });
+        
+        if (!respuesta.ok) throw new Error('Error en el servidor');
+        const datos = await respuesta.json();
+        setUsuarios2(datos);
+      } catch (err) {
+        // Si el fetch se canceló por tiempo, guardamos un mensaje amigable
+        if (err.name === 'AbortError') {
+          setError('El servidor tardó demasiado en responder. Reintentá más tarde.');
+        } else {
+          setError(err.message);
+        }
+        const usuariosDeRespaldo = [
+          { id: 991, name: 'Usuario de Prueba 1', email: 'prueba1@test.com' },
+          { id: 992, name: 'Usuario de Prueba 2', email: 'prueba2@test.com' }
+        ];
+        setUsuarios2(usuariosDeRespaldo);
+      } finally {
+        clearTimeout(timeoutId); // Limpiamos el temporizador
+        setCargando2(false);
+      }
+    };
+  
+    cargarDatos();
+  }, []);
+  
 
- 
+ /*  if(cargando2) return <h2>Cargando usuarios.. ⏳</h2>
+
+  if(error) return <h2>{error}</h2> */
 
 const eliminarUsuario = (idTarget) => {
   const nuevosUsuarios = usuarios2.filter(user => user.id !== idTarget);
@@ -74,9 +114,13 @@ const eliminarUsuario = (idTarget) => {
       </ul>
 
       <h2>Lista de Usuarios desde API 👥</h2>
+    {cargando2?(
+        <h2>Cargando usuarios... ⏳</h2>
+        ):error?(
+        <h2>{error} Se mostrarán usuarios de prueba</h2>):('')}
       <ul>
         {usuarios2.map(usuario =>(
-          /* <li key={usuario.id}> aaaaaa
+          /* <li key={usuario.id}> 
             <strong>{usuario.name}</strong> - {usuario.email}
           </li> */
            <TarjetaUsuario 
@@ -91,6 +135,7 @@ const eliminarUsuario = (idTarget) => {
         
         ) )}
       </ul>
+        
     </div>
 
           
