@@ -100,7 +100,7 @@ const eliminarUsuario = (idTarget) => {
         type="text" 
         value={newTodo} 
         onChange={(e) => setNewTodo(e.target.value)} 
-        placeholder="Nueva tarea..."
+        placeholder="Nueva tarea......"
       />
       <button onClick={addTodo}>Agregar</button>
 
