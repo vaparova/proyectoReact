@@ -76,7 +76,7 @@ const eliminarUsuario = (idTarget) => {
       <h2>Lista de Usuarios desde API 👥</h2>
       <ul>
         {usuarios2.map(usuario =>(
-          /* <li key={usuario.id}>
+          /* <li key={usuario.id}> aaaaaa
             <strong>{usuario.name}</strong> - {usuario.email}
           </li> */
            <TarjetaUsuario 
